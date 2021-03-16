@@ -24,5 +24,5 @@ target_link_libraries(HelloWindow ${OPENGL_LIBS})
 add_executable(HelloTriangle ${UTILS_SRC} HelloTriangle/main.c)
 target_link_libraries(HelloTriangle ${OPENGL_LIBS})
 
-
-
+add_executable(TwoDemensionTransform ${UTILS_SRC} TwoDemensionTransform/main.c)
+target_link_options(TwoDemensionTransform PUBLIC -framework GLUT)
