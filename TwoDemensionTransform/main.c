@@ -11,7 +11,7 @@ GLfloat h=480;       //Высота мирового окна
 GLfloat l, r, b, t;  //Параметры мирового окна
 GLfloat f=0.0f;
 GLfloat dStep=0.0f;
-GLfloat dAngle=0.0f;
+GLfloat dAngle=3.0f;
 
 void init(void) { //Расчет параметров мирового окна
 	h=w/R; l=-w/2; r=w/2; b=-h/2; t=h/2;
@@ -57,16 +57,16 @@ void myPoint(void) {
 void scene(void) {
 	glClear(GL_COLOR_BUFFER_BIT);
 
-	glRotatef(dAngle, 0.0, 0.0, 1.0); glTranslatef(dStep, 0.5f, 0.0f);
-	glPushMatrix();
-	myPoint();
 	glPopMatrix();
+	myPoint();
+	glRotatef(dAngle, 0.0, 0.0, 1.0); glTranslatef(2.f, 0.0f, 0.0f);
+	glPushMatrix();
 
 	glFlush();
 	glutSwapBuffers();
-	dAngle += 1.f; if (dAngle == 360.f) dAngle = 0.0f;
-	dStep += 2.f; if (dStep >= h / 2) dStep = 0.0f;
-	usleep(100000);
+	dAngle *= 1.001f; if (dAngle <= 0.f) dAngle = 30.0f;
+//	dStep += 2.f; if (dStep >= h / 2) dStep = 0.0f;
+	usleep(10000);
 }
 
 void main(int argc, char **argv) {
