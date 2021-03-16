@@ -37,15 +37,6 @@ void showAxis(void) {
 	glVertex2f(r, 0);
 	glEnd();
 }
-void fig0(void) {
-	glColor3f(0.0, 1.0, 0.0);
-	glBegin(GL_LINE_LOOP);
-	glVertex2f(0.0, 0.0);
-	glVertex2f(0.0, 3.0);
-	glVertex2f(5.0, 2.0);
-	glVertex2f(5.0, 0.0);
-	glEnd();
-}
 
 void myPoint(void) {
 	glColor3f(1.0f, 0.0f, 0.0f);
@@ -54,11 +45,11 @@ void myPoint(void) {
 	glEnd();
 }
 
-void scene(void) {
+void spiral(void) {
 	glClear(GL_COLOR_BUFFER_BIT);
 	showAxis();
 
-	glPushMatrix();
+	glPushMatrix(); // todo remove push pop? use glLoadIdentity(); instead?
 	glRotatef(dAngle, 0.0, 0.0, 1.0);
 	glTranslatef(dStep, 0.0f, 0.0f);
 	myPoint();
@@ -71,7 +62,67 @@ void scene(void) {
 	usleep(20000);
 }
 
+void showAxisSmall(void) {
+	glColor3f(0.0f, 0.0f, 0.0f);
+	glBegin(GL_LINES);
+	glVertex2f(0.f, 0.f);
+	glVertex2f(0.f, 30.f);
+	glVertex2f(0.f, 0.f);
+	glVertex2f(30.f, 0.f);
+	glEnd();
+}
+
+void fig0(void) {
+	showAxisSmall();
+	glColor3f(0.0f, 1.0f, 0.0f);
+	glBegin(GL_LINE_LOOP);
+	glVertex2f(100.0f, 100.0f);
+	glVertex2f(-100.0f, 100.0f);
+	glVertex2f(-100.0f, -100.0f);
+	glVertex2f(100.0f, -100.0f);
+	glEnd();
+}
+
+void fig1Modify(GLfloat step) {
+	glTranslatef(-step, step, 0.f);
+	glRotatef(90.f, 0.f, 0.f, 1.f);
+}
+
+void fig1(GLfloat step) {
+	fig1Modify(step);
+	glColor3f(1.0f, 0.0f, 0.0f);
+	glBegin(GL_LINE_LOOP);
+	glVertex2f(0.f, 50.f);
+	glVertex2f(0.f, -50.f);
+	glVertex2f(50.f, 0.f);
+	glEnd();
+	showAxisSmall();
+}
+
+void bigModify(GLfloat angle, GLfloat step) {
+	glRotatef(angle, 0.f, 0.f, 1.f);
+	glTranslatef(step, 0.f, 0.f);
+}
+
+void squaresAndTriangles() {
+	static GLfloat stepScaler = 3.f;
+	static GLfloat scaleScaler = 0.02f;
+	glClear(GL_COLOR_BUFFER_BIT);
+	glLoadIdentity();
+	fig0();
+	bigModify(dAngle, dStep);
+	for (int i = 0; i < 4; ++i)
+		fig1(dStep);
+	glFlush();
+	glutSwapBuffers();
+	dAngle += 1.f; if (dAngle >= 360.f) dAngle = 0.f;
+	dStep += stepScaler; if (dStep >= 140.f || dStep <= 60) stepScaler *= -1.f;
+}
+
 int main(int argc, char **argv) {
+	void (*task) ();
+//	task = spiral;
+	task = squaresAndTriangles;
 
 	glutInit(&argc, argv);
 //	glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
@@ -80,8 +131,8 @@ int main(int argc, char **argv) {
 	glutInitWindowPosition(20, 20);
 	glutCreateWindow("Myprog");
 	glutReshapeFunc(reshape);
-	glutDisplayFunc(scene);
-	glutIdleFunc(scene);
+	glutDisplayFunc(task);
+	glutIdleFunc(task);
 	init();
 	glutMainLoop();
 }
