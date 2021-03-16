@@ -3,7 +3,7 @@ all: libs
 
 
 libs: glfw glew
-	@echo "\033[32m libs builded \033[0m"
+	@echo "\033[32mLibs builded \033[0m"
 
 .PHONY: glfw
 glfw:
