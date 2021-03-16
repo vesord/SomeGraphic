@@ -10,8 +10,8 @@ GLfloat w=640;       //Ширина мирового окна
 GLfloat h=480;       //Высота мирового окна
 GLfloat l, r, b, t;  //Параметры мирового окна
 GLfloat f=0.0f;
-GLfloat dStep=0.0f;
-GLfloat dAngle=15.0f;
+GLfloat dStep = 60;
+GLfloat dAngle = 16.0f;
 
 void init(void) { //Расчет параметров мирового окна
 	h=w/R; l=-w/2; r=w/2; b=-h/2; t=h/2;
@@ -66,8 +66,8 @@ void scene(void) {
 
 	glFlush();
 	glutSwapBuffers();
-	dAngle += 4.f; if (dAngle >= 360.f) dAngle = 0.0f;
-	dStep += 0.05f; if (dStep >= h / 8) dStep = 0.0f;
+	dAngle -= 4.f; if (dAngle <= 0.f) dAngle = 360.0f;
+	dStep -= 0.05f; if (dStep <= 0) dStep = 60.0f;
 	usleep(20000);
 }
 
