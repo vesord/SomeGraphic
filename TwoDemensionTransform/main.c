@@ -12,6 +12,7 @@ GLfloat l, r, b, t;  //Параметры мирового окна
 GLfloat f=0.0f;
 GLfloat dStep = 60;
 GLfloat dAngle = 16.0f;
+GLfloat dScale = 1.0f;
 
 void init(void) { //Расчет параметров мирового окна
 	h=w/R; l=-w/2; r=w/2; b=-h/2; t=h/2;
@@ -99,24 +100,26 @@ void fig1(GLfloat step) {
 	showAxisSmall();
 }
 
-void bigModify(GLfloat angle, GLfloat step) {
+void bigModify(GLfloat angle, GLfloat step, GLfloat scale) {
+//	glScalef(scale, scale, 0.f);
 	glRotatef(angle, 0.f, 0.f, 1.f);
 	glTranslatef(step, 0.f, 0.f);
 }
 
 void squaresAndTriangles() {
 	static GLfloat stepScaler = 3.f;
-	static GLfloat scaleScaler = 0.02f;
+	static GLfloat scaleScaler = 0.05f;
 	glClear(GL_COLOR_BUFFER_BIT);
 	glLoadIdentity();
 	fig0();
-	bigModify(dAngle, dStep);
+	bigModify(dAngle, dStep, dScale);
 	for (int i = 0; i < 4; ++i)
 		fig1(dStep);
 	glFlush();
 	glutSwapBuffers();
 	dAngle += 1.f; if (dAngle >= 360.f) dAngle = 0.f;
 	dStep += stepScaler; if (dStep >= 140.f || dStep <= 60) stepScaler *= -1.f;
+	dScale += scaleScaler; if (dScale <= 0.5f || dScale >= 2.0f) scaleScaler *= -1.f;
 }
 
 int main(int argc, char **argv) {
