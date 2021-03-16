@@ -2,13 +2,16 @@
 #include <GLUT/glut.h>
 #include <stdlib.h>
 #include <math.h>
+#include <unistd.h>
 
 #define PI 3.1459
 GLfloat R=640.0/480; //Форматное соотношение
-GLfloat w=40;        //Ширина мирового окна
-GLfloat h;           //Высота мирового окна
+GLfloat w=640;       //Ширина мирового окна
+GLfloat h=480;       //Высота мирового окна
 GLfloat l, r, b, t;  //Параметры мирового окна
-GLfloat f=30.0 ;
+GLfloat f=0.0f;
+GLfloat dStep=0.0f;
+GLfloat dAngle=0.0f;
 
 void init(void) { //Расчет параметров мирового окна
 	h=w/R; l=-w/2; r=w/2; b=-h/2; t=h/2;
@@ -48,20 +51,22 @@ void myPoint(void) {
 	glColor3f(1.0f, 0.0f, 0.0f);
 	glBegin(GL_POINTS);
 	glVertex2f(0.0f, 0.0f);
+	glEnd();
 }
 
 void scene(void) {
 	glClear(GL_COLOR_BUFFER_BIT);
-	showAxis();
-	fig0();
+
+	glRotatef(dAngle, 0.0, 0.0, 1.0); glTranslatef(dStep, 0.5f, 0.0f);
 	glPushMatrix();
-	glTranslatef(4.5, 8.0, 0.0); glRotatef(f, 0.0, 0.0, 1.0); glScalef(1.0, -1.0, 1.0);
-	fig0();
-	glPopMatrix( );
+	myPoint();
+	glPopMatrix();
+
 	glFlush();
 	glutSwapBuffers();
-	f+=1; if(f==360) f=0;
-//	Sleep(200);
+	dAngle += 1.f; if (dAngle == 360.f) dAngle = 0.0f;
+	dStep += 2.f; if (dStep >= h / 2) dStep = 0.0f;
+	usleep(100000);
 }
 
 void main(int argc, char **argv) {
