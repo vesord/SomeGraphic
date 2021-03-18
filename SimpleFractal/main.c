@@ -115,7 +115,7 @@ GLfloat * reinitColors(GLfloat * colors, GLint count) {
 }
 
 static GLfloat angle;
-static GLfloat dAngle = 0.3f;
+static GLfloat dAngle = .5f;
 
 void display() {
 	static GLint trianglesToDisplay;
@@ -136,7 +136,7 @@ void display() {
 	if (angle >= 360.f) {
 		angle = 0.f;
 	}
-	if ( (int)angle % 10 == 0)
+	if ( (int)(angle * 2) % 36 == 0)
 		++trianglesToDisplay;
 
 	if (trianglesToDisplay == maxTrianglesToDisplay) {
