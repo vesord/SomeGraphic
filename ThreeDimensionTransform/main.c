@@ -133,7 +133,7 @@ void display() {
 	glLoadIdentity();
 	gluLookAt(eyex, eyey, eyez, 0.f, 0.f, 0.f, 0.f, 1.f, 0.f);
 	fig(0.f, 0.f, 0.f);
-	fig(3.f, 0.f, 0.f);
+	fig(3.f, 0.f, 0.f);	// switch
 
 	glFlush();
 	glutSwapBuffers();
