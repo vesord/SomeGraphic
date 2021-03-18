@@ -29,3 +29,6 @@ target_link_options(TwoDimensionTransform PUBLIC -framework GLUT)
 
 add_executable(ThreeDimensionTransform ${UTILS_SRC} ThreeDimensionTransform/main.c)
 target_link_options(ThreeDimensionTransform PUBLIC -framework GLUT)
+
+add_executable(Polygons ${UTILS_SRC} Polygons/main.c)
+target_link_options(Polygons PUBLIC -framework GLUT)
