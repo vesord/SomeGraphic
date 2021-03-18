@@ -9,77 +9,131 @@ GLfloat w=640;       //Ширина мирового окна
 GLfloat h=480;       //Высота мирового окна
 GLfloat l, r, b, t;  //Параметры мирового окна
 
-GLdouble eyex = 20.;
-GLdouble eyey = 0.;
-GLdouble eyez = 20.;
+GLdouble radius = 10.;
+GLdouble eyex = 10.;
+GLdouble eyez = 0.;
+GLdouble eyey = 1.5;
+GLfloat scalex = 1.f;
+GLfloat scaley = 1.f;
+GLfloat scalez = 1.f;
 
-//const GLfloat light_ambient[]  = { 0.0f, 0.0f, 0.0f, 1.0f };
-//const GLfloat light_diffuse[]  = { 1.0f, 1.0f, 1.0f, 1.0f };
-//const GLfloat light_specular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-//const GLfloat light_position[] = { 2.0f, 5.0f, 5.0f, 0.0f };
-//
-//const GLfloat mat_ambient[]    = { 0.7f, 0.7f, 0.7f, 1.0f };
-//const GLfloat mat_diffuse[]    = { 0.8f, 0.8f, 0.8f, 1.0f };
-//const GLfloat mat_specular[]   = { 1.0f, 1.0f, 1.0f, 1.0f };
-//const GLfloat high_shininess[] = { 100.0f };
+GLfloat angle = 0.f;
+GLfloat dAngleStep = 0.02f;
+GLfloat dScaleStep = 0.1f;
 
 void init(void) {
-	h=w/R; l=-w/2; r=w/2; b=-h/2; t=h/2;
+	h=w/R; l=-w/80; r=w/80; b=-h/80; t=h/80;
 	glClearColor(0.3f, 0.3f, 0.3f, 0.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
 	glEnable(GL_DEPTH_TEST);
 	glViewport(0, 0, w, h);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	glFrustum(-w/h, w/h, -1.0, 1.0, 2.0, 100.0);
+//	glOrtho(l, r, b, t, -1000.0, 1000.0);				// switch
+	gluPerspective(45.f, R, 2., 200);	// switch
 	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity() ;
-
-//	glEnable(GL_CULL_FACE);
-//	glCullFace(GL_BACK);
-
-//	glDepthFunc(GL_LESS);
-
-//	glEnable(GL_LIGHT0);
-//	glEnable(GL_NORMALIZE);
-//	glEnable(GL_COLOR_MATERIAL);
-//	glEnable(GL_LIGHTING);
-//
-//	glLightfv(GL_LIGHT0, GL_AMBIENT,  light_ambient);
-//	glLightfv(GL_LIGHT0, GL_DIFFUSE,  light_diffuse);
-//	glLightfv(GL_LIGHT0, GL_SPECULAR, light_specular);
-//	glLightfv(GL_LIGHT0, GL_POSITION, light_position);
-//
-//	glMaterialfv(GL_FRONT, GL_AMBIENT,   mat_ambient);
-//	glMaterialfv(GL_FRONT, GL_DIFFUSE,   mat_diffuse);
-//	glMaterialfv(GL_FRONT, GL_SPECULAR,  mat_specular);
-//	glMaterialfv(GL_FRONT, GL_SHININESS, high_shininess);
+	glLoadIdentity();
 }
+
+void increaseAngle(GLfloat step) {
+	if (angle + step < -M_PI)
+		angle = M_PI;
+	else if (angle + step > M_PI)
+		angle = -M_PI;
+	else
+		angle += step;
+}
+
+void keyFunction(unsigned char key, int x, int y) {
+	switch (key) {
+		case 'X':
+			increaseAngle(dAngleStep);
+			break;
+		case 'Y':
+			increaseAngle(-dAngleStep);
+			break;
+		default: break;
+	}
+	glutPostRedisplay();
+}
+
+void increaseScale(GLfloat mult) {
+	scalex *= mult;
+	scaley *= mult;
+}
+
+void mouseFunction(int button, int state, int x, int y) {
+	if (state != GLUT_UP)
+		return;
+	switch (button) {
+		case GLUT_LEFT_BUTTON:
+			increaseScale(1. + dScaleStep);
+			break;
+		case GLUT_RIGHT_BUTTON:
+			increaseScale(1. - dScaleStep);
+			break;
+		default: break;
+	}
+	glutPostRedisplay();
+}
+
 
 void reshape(GLsizei W, GLsizei H) {
 	if(R>W/H) glViewport(0,0,W,W/R);
 	else glViewport(0,0,H*R,H);
 }
 
+void countEyes() {
+	eyex = sin(angle) * radius;
+	eyez = cos(angle) * radius;
+}
 
-void disp() {
+void fig(GLfloat x, GLfloat y, GLfloat z) {
+	glPushMatrix();
+	glTranslatef(x, y, x);
+	glScalef(scalex, scaley, scalez);
+	glutWireOctahedron();
+	glPopMatrix();
+}
+
+void autoIncreaseScale() {
+	static GLint phase = 1;
+	static GLint period = 100;
+	static GLfloat scaleMin = 0.5f;
+	static GLfloat scaleMax = 2.5f;
+	GLfloat sc;
+
+	if (phase < period >> 1) {
+		sc = scaleMin + (scaleMax - scaleMin) / (period << 1) * (phase++ << 1);
+		scalex = sc;
+		scaley = sc;
+		scalez = sc;
+	}
+	else {
+		sc = scaleMax - (scaleMax - scaleMin) / (period << 1) * (phase++ << 1);
+		scalex = sc;
+		scaley = sc;
+		scalez = sc;
+	}
+	if (phase == period)
+		phase = 1;
+}
+
+void idle() {
+	increaseAngle(dAngleStep);	// switch
+	autoIncreaseScale();		// switch
+	glutPostRedisplay();
+}
+
+void display() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glColor3f(1.f, 0.f, 0.f);
-	static GLfloat dAngle = 0.f;
 
-	glPushMatrix();
+	countEyes();
+	glLoadIdentity();
 	gluLookAt(eyex, eyey, eyez, 0.f, 0.f, 0.f, 0.f, 1.f, 0.f);
-	glRotatef(dAngle, 0.f, 1.f, 0.f);
-	glutWireOctahedron();
-	glPopMatrix();
-
-	glPushMatrix();
-	glTranslatef(2.f, 0.f, -10.f);
-	glutWireOctahedron();
-	glPopMatrix();
-
-	dAngle += 1.f;
-	if (dAngle >= 360.f) dAngle = 0.f;
+	fig(0.f, 0.f, 0.f);
+	fig(3.f, 0.f, 0.f);
 
 	glFlush();
 	glutSwapBuffers();
@@ -92,8 +146,10 @@ int main(int argc, char **argv) {
 	glutInitWindowPosition(20, 20);
 	glutCreateWindow("Myprog");
 	glutReshapeFunc(reshape);
-	glutDisplayFunc(disp);
-	glutIdleFunc(disp);
+	glutDisplayFunc(display);
+	glutIdleFunc(idle);
+	glutKeyboardFunc(keyFunction);
+	glutMouseFunc(mouseFunction);
 	init();
 
 	glutMainLoop();
