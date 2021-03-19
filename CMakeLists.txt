@@ -38,3 +38,6 @@ target_link_options(SimpleFractal PUBLIC -framework GLUT)
 
 add_executable(Colors ${UTILS_SRC} Colors/main.c)
 target_link_options(Colors PUBLIC -framework GLUT)
+
+add_executable(Light ${UTILS_SRC} Light/main.c Light/materials.c Light/materials.h)
+target_link_options(Light PUBLIC -framework GLUT)
