@@ -14,7 +14,9 @@ include_directories(.)
 add_subdirectory(glfw)
 
 set(UTILS_SRC Utils/utils.c
-              Utils/utils.h)
+              Utils/utils.h
+              Utils/materials.c
+              Utils/materials.h)
 
 set(OPENGL_LIBS libglfw3.a libGLEW.a)
 
@@ -39,5 +41,8 @@ target_link_options(SimpleFractal PUBLIC -framework GLUT)
 add_executable(Colors ${UTILS_SRC} Colors/main.c)
 target_link_options(Colors PUBLIC -framework GLUT)
 
-add_executable(Light ${UTILS_SRC} Light/main.c Light/materials.c Light/materials.h)
+add_executable(Light ${UTILS_SRC} Light/main.c)
 target_link_options(Light PUBLIC -framework GLUT)
+
+add_executable(deleteInvisible ${UTILS_SRC} deleteInvisible/main.c)
+target_link_options(deleteInvisible PUBLIC -framework GLUT)
