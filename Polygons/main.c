@@ -25,28 +25,10 @@ void reshape(GLsizei W, GLsizei H) {
 	else glViewport(0,0,H*R,H);
 }
 
-typedef enum	e_modeChange {
-	front,
-	back
-}				t_modeChange;
-
-void changeMode(t_modeChange mode) {
-	switch (mode) {
-		case front: glCullFace(GL_FRONT); break;
-		case back:	glCullFace(GL_BACK); break;
-		default: break;
-	}
-}
-
 void keyFunction(unsigned char key, int x, int y) {
 	switch (key) {
-		case 'f':
-			changeMode(front);
-			break;
-		case 'b':
-			changeMode(back);
-			break;
-		default: break;
+		case 'f': glCullFace(GL_FRONT); break;
+		case 'b': glCullFace(GL_BACK); break;
 	}
 	glutPostRedisplay();
 }
