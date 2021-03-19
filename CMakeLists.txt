@@ -35,3 +35,6 @@ target_link_options(Polygons PUBLIC -framework GLUT)
 
 add_executable(SimpleFractal ${UTILS_SRC} SimpleFractal/main.c)
 target_link_options(SimpleFractal PUBLIC -framework GLUT)
+
+add_executable(Colors ${UTILS_SRC} Colors/main.c)
+target_link_options(Colors PUBLIC -framework GLUT)
