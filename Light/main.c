@@ -12,11 +12,11 @@ static const GLfloat lightDAngle = 1.f;
 static const GLfloat figurDAngle = 1.f;
 
 typedef enum e_rotate_what {
-	OBJECT,
-	LIGHT
+	ROTATE_OBJECT,
+	ROTATE_LIGHT
 }			 t_rotate_what;
 
-static t_rotate_what rotateWhat = OBJECT;
+static t_rotate_what rotateWhat = ROTATE_OBJECT;
 
 void init(void) {
 	glClearColor(0.6f, 0.6f, 0.9f, 0.0f);
@@ -53,11 +53,11 @@ void initLight() {
 }
 
 void rotateObject() {
-	rotateWhat = OBJECT;
+	rotateWhat = ROTATE_OBJECT;
 }
 
 void rotateLight() {
-	rotateWhat = LIGHT;
+	rotateWhat = ROTATE_LIGHT;
 }
 
 void key(unsigned char key, int x, int y) {
@@ -163,8 +163,8 @@ void normalizeAngle(GLfloat *angle) {
 
 void updateAngles() {
 	switch (rotateWhat) {
-		case OBJECT: figurAngle += figurDAngle; normalizeAngle(&figurAngle); break;
-		case LIGHT: lightAngle += lightDAngle; normalizeAngle(&lightAngle); break;
+		case ROTATE_OBJECT: figurAngle += figurDAngle; normalizeAngle(&figurAngle); break;
+		case ROTATE_LIGHT: lightAngle += lightDAngle; normalizeAngle(&lightAngle); break;
 		default: break;
 	}
 }
@@ -176,7 +176,7 @@ void idle() {
 
 int main(int argc, char **argv) {
 	glutInit(&argc, argv);
-	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
+	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
 	glutInitWindowSize(windowWidth, windowHeight);
 	glutInitWindowPosition(20, 20);
 	glutCreateWindow("MY SUPER PROGRAM!");
