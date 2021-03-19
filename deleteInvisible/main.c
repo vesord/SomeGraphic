@@ -23,10 +23,7 @@ void init(void) {
 	glClear(GL_COLOR_BUFFER_BIT);
 	glEnable(GL_NORMALIZE);
 	glEnable(GL_CULL_FACE);
-//	glEnable(GL_DEPTH_TEST);
-
-//	glEnable(GL_DEPTH_TEST);
-//	glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
+	glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
 
 	glViewport(0, 0, windowWidth, windowHeight);
 	glMatrixMode(GL_PROJECTION);
