@@ -29,6 +29,7 @@ void keyFunction(unsigned char key, int x, int y) {
 	switch (key) {
 		case 'f': glCullFace(GL_FRONT); break;
 		case 'b': glCullFace(GL_BACK); break;
+		default: break;
 	}
 	glutPostRedisplay();
 }
