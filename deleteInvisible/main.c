@@ -12,19 +12,21 @@ static const GLfloat lightDAngle = 1.f;
 static const GLfloat figurDAngle = 1.f;
 
 typedef enum e_rotate_what {
-	OBJECT,
-	LIGHT
+	ROTATE_OBJECT,
+	ROTATE_LIGHT
 }			 t_rotate_what;
 
-static t_rotate_what rotateWhat = OBJECT;
+static t_rotate_what rotateWhat = ROTATE_OBJECT;
 
 void init(void) {
 	glClearColor(0.6f, 0.6f, 0.9f, 0.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
-	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_NORMALIZE);
 	glEnable(GL_CULL_FACE);
-	glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
+//	glEnable(GL_DEPTH_TEST);
+
+//	glEnable(GL_DEPTH_TEST);
+//	glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
 
 	glViewport(0, 0, windowWidth, windowHeight);
 	glMatrixMode(GL_PROJECTION);
@@ -53,11 +55,11 @@ void initLight() {
 }
 
 void rotateObject() {
-	rotateWhat = OBJECT;
+	rotateWhat = ROTATE_OBJECT;
 }
 
 void rotateLight() {
-	rotateWhat = LIGHT;
+	rotateWhat = ROTATE_LIGHT;
 }
 
 void key(unsigned char key, int x, int y) {
@@ -66,6 +68,9 @@ void key(unsigned char key, int x, int y) {
 		case 'b': glCullFace(GL_BACK); break;
 		case 'o': rotateObject(); break;
 		case '1': rotateLight(); break;
+		case 'n': glDisable(GL_DEPTH_TEST); break;
+		case 'g': glEnable(GL_DEPTH_TEST); break;
+		case 'z': break; // reserved
 		default: break;
 	}
 	glutPostRedisplay();
@@ -150,7 +155,12 @@ void display() {
 	gluLookAt(0.0, 4., 4., 0., 0., 0., 0., 1., 0.);
 
 	locateLight();
-	drawFigure();
+	for (int i = 0; i < 7; ++i) {
+		glPushMatrix();
+		glRotatef(1.f * i * 360.f / 7., 0.f, 1.f, 0.f);
+		drawFigure();
+		glPopMatrix();
+	}
 
 	glFlush();
 	glutSwapBuffers();
@@ -163,8 +173,8 @@ void normalizeAngle(GLfloat *angle) {
 
 void updateAngles() {
 	switch (rotateWhat) {
-		case OBJECT: figurAngle += figurDAngle; normalizeAngle(&figurAngle); break;
-		case LIGHT: lightAngle += lightDAngle; normalizeAngle(&lightAngle); break;
+		case ROTATE_OBJECT: figurAngle += figurDAngle; normalizeAngle(&figurAngle); break;
+		case ROTATE_LIGHT: lightAngle += lightDAngle; normalizeAngle(&lightAngle); break;
 		default: break;
 	}
 }
@@ -176,7 +186,7 @@ void idle() {
 
 int main(int argc, char **argv) {
 	glutInit(&argc, argv);
-	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
+	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
 	glutInitWindowSize(windowWidth, windowHeight);
 	glutInitWindowPosition(20, 20);
 	glutCreateWindow("MY SUPER PROGRAM!");
