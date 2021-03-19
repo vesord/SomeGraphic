@@ -5,10 +5,6 @@
 static const GLint windowWidth =  640;
 static const GLint windowHeight = 640;
 static const GLfloat windowRatio = (float)windowWidth / windowHeight;
-static const GLint leftCorner = 	-windowWidth / 2;
-static const GLint rightCorner =	 windowWidth / 2;
-static const GLint topCorner = 		 windowHeight / 2;
-static const GLint bottomCorner = 	-windowHeight / 2;
 
 static GLfloat lightAngle = 0.f;
 static GLfloat figurAngle = 0.f;
