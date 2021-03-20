@@ -11,18 +11,12 @@ typedef struct	s_material {
 }				t_material;
 
 static const t_material materials[] = {
-{MATERIAL_NONE,
+{MATERIAL_NONE_BEGIN,
 		{0.0f, 0.0f, 0.0f, 0.0f},
 		{0.0f, 0.0f, 0.0f, 0.0f},
 		{0.0f, 0.0f, 0.0f, 0.0f},
 		0.f
 	},
-{MATERIAL_EMPTY,
-	{1.0f, 1.0f, 1.0f, 1.0f},
-	{1.0f, 1.0f, 1.0f, 1.0f},
-	{1.0f, 1.0f, 1.0f, 1.0f},
-	128.f
-},
 {MATERIAL_BRASS,
 		{0.329412f, 0.223529f, 0.027451f,1.0f },
 		{0.780392f, 0.568627f, 0.113725f, 1.0f },
@@ -196,7 +190,13 @@ static const t_material materials[] = {
 		{0.5f,0.5f,0.4f,1.0f},
 		{0.7f,0.7f,0.04f,1.0f },
 		10.0f
-	}
+	},
+{MATERIAL_EMPTY_END,
+	{1.0f, 1.0f, 1.0f, 1.0f},
+	{1.0f, 1.0f, 1.0f, 1.0f},
+	{1.0f, 1.0f, 1.0f, 1.0f},
+	128.f
+}
 };
 
 void applyMaterial(GLenum cullMode, t_material_type materialType) {

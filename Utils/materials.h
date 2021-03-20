@@ -2,8 +2,7 @@
 #define MATERIALS_H
 
 typedef enum e_material_type {
-	MATERIAL_NONE,
-	MATERIAL_EMPTY,
+	MATERIAL_NONE_BEGIN = 0,
 	MATERIAL_BRASS,
 	MATERIAL_BRONZE,
 	MATERIAL_POLISHED_BRONZE,
@@ -33,7 +32,7 @@ typedef enum e_material_type {
 	MATERIAL_RED_RUBBER,
 	MATERIAL_WHITE_RUBBER,
 	MATERIAL_YELLOW_RUBBER,
-	MATERIAL_END
+	MATERIAL_EMPTY_END
 }			 t_material_type;
 
 void applyMaterial(GLenum cullMode, t_material_type materialType);
