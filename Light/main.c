@@ -17,6 +17,8 @@ typedef enum e_rotate_what {
 }			 t_rotate_what;
 
 static t_rotate_what rotateWhat = ROTATE_OBJECT;
+static t_material_type materialType = MATERIAL_SILVER;
+
 
 void init(void) {
 	glClearColor(0.6f, 0.6f, 0.9f, 0.0f);
@@ -60,12 +62,20 @@ void rotateLight() {
 	rotateWhat = ROTATE_LIGHT;
 }
 
+void changeMaterial() {
+	++materialType;
+	if (materialType == MATERIAL_END)
+		materialType = MATERIAL_NONE;
+	applyMaterial(GL_FRONT, materialType);
+}
+
 void key(unsigned char key, int x, int y) {
 	switch (key) {
 		case 'f': glCullFace(GL_FRONT); break;
 		case 'b': glCullFace(GL_BACK); break;
 		case 'o': rotateObject(); break;
 		case '1': rotateLight(); break;
+		case 'm': changeMaterial(); break;
 		default: break;
 	}
 	glutPostRedisplay();
@@ -187,6 +197,6 @@ int main(int argc, char **argv) {
 	init();
 	initLight();
 	applyMaterial(GL_BACK, MATERIAL_PERL);
-	applyMaterial(GL_FRONT, MATERIAL_SILVER);
+	applyMaterial(GL_FRONT, materialType);
 	glutMainLoop();
 }
