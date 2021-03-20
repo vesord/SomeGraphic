@@ -12,6 +12,7 @@ include_directories(Shaders)
 include_directories(.)
 
 add_subdirectory(glfw)
+add_subdirectory(HelloGLUT)
 
 set(UTILS_SRC Utils/utils.c
               Utils/utils.h
@@ -25,27 +26,3 @@ target_link_libraries(HelloWindow ${OPENGL_LIBS})
 
 add_executable(HelloTriangle ${UTILS_SRC} HelloTriangle/main.c)
 target_link_libraries(HelloTriangle ${OPENGL_LIBS})
-
-add_executable(TwoDimensionTransform ${UTILS_SRC} TwoDimensionTransform/main.c)
-target_link_options(TwoDimensionTransform PUBLIC -framework GLUT)
-
-add_executable(ThreeDimensionTransform ${UTILS_SRC} ThreeDimensionTransform/main.c)
-target_link_options(ThreeDimensionTransform PUBLIC -framework GLUT)
-
-add_executable(Polygons ${UTILS_SRC} Polygons/main.c)
-target_link_options(Polygons PUBLIC -framework GLUT)
-
-add_executable(SimpleFractal ${UTILS_SRC} SimpleFractal/main.c)
-target_link_options(SimpleFractal PUBLIC -framework GLUT)
-
-add_executable(Colors ${UTILS_SRC} Colors/main.c)
-target_link_options(Colors PUBLIC -framework GLUT)
-
-add_executable(Light ${UTILS_SRC} Light/main.c)
-target_link_options(Light PUBLIC -framework GLUT)
-
-add_executable(DeleteInvisible ${UTILS_SRC} DeleteInvisible/main.c)
-target_link_options(DeleteInvisible PUBLIC -framework GLUT)
-
-add_executable(Textures ${UTILS_SRC} Textures/main.c)
-target_link_options(Textures PUBLIC -framework GLUT)

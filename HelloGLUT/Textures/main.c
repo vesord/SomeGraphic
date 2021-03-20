@@ -84,9 +84,11 @@ unsigned char *myBMPLoader(const char *filename, int *width, int *height) {
 	unsigned char *		data = NULL;
 	int ret;
 
-	fd = open(filename, O_RDWR);
-	if (fd < 0)
+	fd = open(filename, O_RDONLY);
+	if (fd < 0) {
+		printf("can't open file %s\n", filename);
 		exit(1);
+	}
 
 	read(fd, &(bfh.type_1), 1);
 	read(fd, &(bfh.type_2), 1);
