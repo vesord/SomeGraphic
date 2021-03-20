@@ -3,7 +3,10 @@
 #include <math.h>
 
 /**
-	\brief
+	\author Vesord
+ 	\date march 2021
+	\brief simple 3D visualisation of glutFigures
+
 	key x - rotate clockwise
  	key y - rotate contr clockwise
  	key s - enable/disable autoscale on x and y axis
