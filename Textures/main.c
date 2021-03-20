@@ -4,7 +4,6 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <fcntl.h>
-#include <errno.h>
 #include "materials.h"
 
 static const GLint windowWidth =  640;
@@ -24,7 +23,7 @@ typedef enum e_rotate_what {
 static GLuint texture;
 
 static t_rotate_what rotateWhat = ROTATE_OBJECT;
-static t_material_type materialType = MATERIAL_SILVER;
+static t_material_type materialType = MATERIAL_EMPTY;
 
 void init(void) {
 	glClearColor(0.6f, 0.6f, 0.9f, 0.0f);
@@ -118,16 +117,12 @@ unsigned char *myBMPLoader(const char *filename, int *width, int *height) {
 	return data;
 }
 
-void fixImage(unsigned char * image, int width, int height) {
-	int size = width * height;
+void fixImage(unsigned char * image, int width, int height, int channels) {
+	int size = width * height * channels;
 	char tmp;
-	for (int i = 0; i < size; i += 4) {
+	for (int i = 0; i < size; i += channels) {
 		tmp = image[i];
-		image[i] = image[i + 3];
-		image[i + 3] = tmp;
-
-		tmp = image[i + 1];
-		image[i + 1] = image[i + 2];
+		image[i] = image[i + 2];
 		image[i + 2] = tmp;
 	}
 }
@@ -147,7 +142,7 @@ void initTexture() {
 	unsigned char* image = myBMPLoader("Star.bmp", &width, &height);
 	if (!image)
 		exit(1);
-//	fixImage(image, width, height);
+	fixImage(image, width, height, 4);
 
 	gluBuild2DMipmaps(GL_TEXTURE_2D, 4, width, height, GL_RGBA, GL_UNSIGNED_BYTE, image);
 	free(image);
@@ -258,7 +253,7 @@ void drawFigure() {
 void display() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glLoadIdentity();
-	gluLookAt(0.0, 3., 3., 0., 0., 0., 0., 1., 0.);
+	gluLookAt(0.0, 3.1, 3.1, 0., 0., 0., 0., 1., 0.);
 
 	locateLight();
 	drawFigure();
@@ -296,9 +291,9 @@ int main(int argc, char **argv) {
 	glutIdleFunc(idle);
 	glutKeyboardFunc(key);
 	init();
-//	initLight();
+	initLight();
 	initTexture();
-//	applyMaterial(GL_BACK, MATERIAL_PERL);
-//	applyMaterial(GL_FRONT, materialType);
+	applyMaterial(GL_BACK, MATERIAL_NONE);
+	applyMaterial(GL_FRONT, materialType);
 	glutMainLoop();
 }
