@@ -1,29 +1,34 @@
+/**
+	\author Vesord
+ 	\date march 2021
+	\brief
+	simple 3D visualisation of object with textures
+	also manual reading bitmap of BMP image
+
+	key o - rotate object
+ 	key 1 - rotate light source
+ 	key f - show cull face
+ 	key b - show cull back
+ 	key e - ???
+ 	key E - ???
+ */
+
 #define GL_SILENCE_DEPRECATION
 #include <GLUT/glut.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
 #include <fcntl.h>
-#include "materials.h"
 
 static const GLint windowWidth =  640;
 static const GLint windowHeight = 640;
 static const GLfloat windowRatio = (float)windowWidth / windowHeight;
 
-static GLfloat lightAngle = 0.f;
 static GLfloat figurAngle = 0.f;
-static const GLfloat lightDAngle = 1.f;
 static const GLfloat figurDAngle = 1.f;
 
-typedef enum e_rotate_what {
-	ROTATE_OBJECT,
-	ROTATE_LIGHT
-}			 t_rotate_what;
-
+static GLint figuresCount = 1;
 static GLuint texture;
-
-static t_rotate_what rotateWhat = ROTATE_OBJECT;
-static t_material_type materialType = MATERIAL_EMPTY;
 
 void init(void) {
 	glClearColor(0.6f, 0.6f, 0.9f, 0.0f);
@@ -36,21 +41,9 @@ void init(void) {
 	glViewport(0, 0, windowWidth, windowHeight);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	gluPerspective(60.f, windowRatio, 2., 200);	// switch
+	gluPerspective(60.f, windowRatio, 2., 200);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-}
-
-void initLight() {
-	GLfloat myAmbient[] = {0.2, 0.2, 0.2, 1.};
-	GLfloat myDiffuse[] = {1., 1., 1., 1.};
-	GLfloat mySpecular[] = {1., 1., 1., 1.};
-	glLightfv(GL_LIGHT0, GL_AMBIENT, myAmbient);
-	glLightfv(GL_LIGHT0, GL_DIFFUSE, myDiffuse);
-	glLightfv(GL_LIGHT0, GL_SPECULAR, mySpecular);
-
-	glEnable(GL_LIGHTING);
-	glEnable(GL_LIGHT0);
 }
 
 typedef struct	s_bmp_file_header
@@ -155,28 +148,12 @@ void reshape(GLsizei W, GLsizei H) {
 	else glViewport(0,0,H*windowRatio,H);
 }
 
-void rotateObject() {
-	rotateWhat = ROTATE_OBJECT;
-}
-
-void rotateLight() {
-	rotateWhat = ROTATE_LIGHT;
-}
-
-void changeMaterial() {
-	++materialType;
-	if (materialType == MATERIAL_END)
-		materialType = MATERIAL_NONE;
-	applyMaterial(GL_FRONT, materialType);
-}
-
 void key(unsigned char key, int x, int y) {
 	switch (key) {
 		case 'f': glCullFace(GL_FRONT); break;
 		case 'b': glCullFace(GL_BACK); break;
-		case 'o': rotateObject(); break;
-		case '1': rotateLight(); break;
-		case 'm': changeMaterial(); break;
+		case 'e': figuresCount = figuresCount % 17 + 1; break;
+		case 'E': figuresCount = (figuresCount + 15) % 17 + 1; break;
 		default: break;
 	}
 	glutPostRedisplay();
@@ -237,14 +214,6 @@ void figure() {
 	glEnd();
 }
 
-void locateLight() {
-	glPushMatrix();
-	glRotatef(lightAngle, 0.f, 1.f, 0.f);
-	GLfloat myLightPosition[] = {0.0, 3.0, 3.0, 1.0};
-	glLightfv(GL_LIGHT0, GL_POSITION, myLightPosition);
-	glPopMatrix();
-}
-
 void drawFigure() {
 	glPushMatrix();
 	glRotatef(figurAngle, 0.f, 1.f, 0.f);
@@ -252,13 +221,26 @@ void drawFigure() {
 	glPopMatrix();
 }
 
+void drawFigures() {
+	for (int i = 0; i < figuresCount; ++i) {
+		glRotatef(360.f / figuresCount + figurAngle, 0.f, 1.f, 0.f);
+		glTranslatef(2.2f, 0.f, 0.f);
+		figure();
+	}
+}
+
 void display() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glLoadIdentity();
-	gluLookAt(0.0, 3.1, 3.1, 0., 0., 0., 0., 1., 0.);
 
-	locateLight();
-	drawFigure();
+	if (figuresCount == 1) {
+		gluLookAt(0.0, 4.1, 4.1, 0., 0., 0., 0., 1., 0.);
+		drawFigure();
+	}
+	else {
+		gluLookAt(0.0, 14.1, 14.1, 0., 0., 0., 0., 1., 0.);
+		drawFigures();
+	}
 
 	glFlush();
 	glutSwapBuffers();
@@ -270,11 +252,7 @@ void normalizeAngle(GLfloat *angle) {
 }
 
 void updateAngles() {
-	switch (rotateWhat) {
-		case ROTATE_OBJECT: figurAngle += figurDAngle; normalizeAngle(&figurAngle); break;
-		case ROTATE_LIGHT: lightAngle += lightDAngle; normalizeAngle(&lightAngle); break;
-		default: break;
-	}
+	figurAngle += figurDAngle; normalizeAngle(&figurAngle);
 }
 
 void idle() {
@@ -293,9 +271,6 @@ int main(int argc, char **argv) {
 	glutIdleFunc(idle);
 	glutKeyboardFunc(key);
 	init();
-	initLight();
 	initTexture();
-	applyMaterial(GL_BACK, MATERIAL_NONE);
-	applyMaterial(GL_FRONT, materialType);
 	glutMainLoop();
 }
