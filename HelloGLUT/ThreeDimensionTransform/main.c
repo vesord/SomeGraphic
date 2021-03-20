@@ -1,8 +1,20 @@
 #define GL_SILENCE_DEPRECATION
 #include <GLUT/glut.h>
-#include <stdlib.h>
 #include <math.h>
-#include <unistd.h>
+
+/**
+	\brief
+	key x - rotate clockwise
+ 	key y - rotate contr clockwise
+ 	key s - enable/disable autoscale on x and y axis
+ 	key r - enable/disable autorotation around y axis
+ 	key 1 - show/hide figure 1
+ 	key 0 - show/hide figure 0
+ 	key e - ???
+
+ 	mouse Left - increase x and y scale
+ 	mouse Right - decrease x and y scale
+ */
 
 GLfloat R=640.0/480; //Форматное соотношение
 GLfloat w=640;       //Ширина мирового окна
@@ -20,6 +32,12 @@ GLfloat scalez = 1.f;
 GLfloat angle = 0.f;
 GLfloat dAngleStep = 0.02f;
 GLfloat dScaleStep = 0.1f;
+
+GLint showFig0 = 1;
+GLint showFig1 = 0;
+GLint enableAutoRotate = 0;
+GLint enableAutoScale = 0;
+GLint easterEggFigure = 0;
 
 void init(void) {
 	h=w/R; l=-w/80; r=w/80; b=-h/80; t=h/80;
@@ -46,12 +64,13 @@ void increaseAngle(GLfloat step) {
 
 void keyFunction(unsigned char key, int x, int y) {
 	switch (key) {
-		case 'X':
-			increaseAngle(dAngleStep);
-			break;
-		case 'Y':
-			increaseAngle(-dAngleStep);
-			break;
+		case 'x': increaseAngle(dAngleStep); break;
+		case 'y': increaseAngle(-dAngleStep); break;
+		case 'r': enableAutoRotate = !enableAutoRotate; break;
+		case 's': enableAutoScale = !enableAutoScale; break;
+		case '1': showFig1 = !showFig1; break;
+		case '0': showFig0 = !showFig0; break;
+		case 'e': easterEggFigure = !easterEggFigure; break;
 		default: break;
 	}
 	glutPostRedisplay();
@@ -77,7 +96,6 @@ void mouseFunction(int button, int state, int x, int y) {
 	glutPostRedisplay();
 }
 
-
 void reshape(GLsizei W, GLsizei H) {
 	if(R>W/H) glViewport(0,0,W,W/R);
 	else glViewport(0,0,H*R,H);
@@ -92,7 +110,10 @@ void fig(GLfloat x, GLfloat y, GLfloat z) {
 	glPushMatrix();
 	glTranslatef(x, y, x);
 	glScalef(scalex, scaley, scalez);
-	glutWireOctahedron();
+	if (!easterEggFigure)
+		glutWireOctahedron();
+	else
+		glutWireTeapot(1);
 	glPopMatrix();
 }
 
@@ -120,8 +141,10 @@ void autoIncreaseScale() {
 }
 
 void idle() {
-	increaseAngle(dAngleStep);	// switch
-	autoIncreaseScale();		// switch
+	if (enableAutoRotate)
+		increaseAngle(dAngleStep);
+	if (enableAutoScale)
+		autoIncreaseScale();
 	glutPostRedisplay();
 }
 
@@ -132,8 +155,10 @@ void display() {
 	countEyes();
 	glLoadIdentity();
 	gluLookAt(eyex, eyey, eyez, 0.f, 0.f, 0.f, 0.f, 1.f, 0.f);
-	fig(0.f, 0.f, 0.f);
-	fig(3.f, 0.f, 0.f);	// switch
+	if (showFig0)
+		fig(0.f, 0.f, 0.f);
+	if (showFig1)
+		fig(3.f, 0.f, 0.f);
 
 	glFlush();
 	glutSwapBuffers();
