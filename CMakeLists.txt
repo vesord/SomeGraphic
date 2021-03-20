@@ -44,5 +44,5 @@ target_link_options(Colors PUBLIC -framework GLUT)
 add_executable(Light ${UTILS_SRC} Light/main.c)
 target_link_options(Light PUBLIC -framework GLUT)
 
-add_executable(deleteInvisible ${UTILS_SRC} deleteInvisible/main.c)
-target_link_options(deleteInvisible PUBLIC -framework GLUT)
+add_executable(DeleteInvisible ${UTILS_SRC} DeleteInvisible/main.c)
+target_link_options(DeleteInvisible PUBLIC -framework GLUT)
