@@ -17,6 +17,12 @@ static const t_material materials[] = {
 		{0.0f, 0.0f, 0.0f, 0.0f},
 		0.f
 	},
+{MATERIAL_EMPTY,
+	{1.0f, 1.0f, 1.0f, 1.0f},
+	{1.0f, 1.0f, 1.0f, 1.0f},
+	{1.0f, 1.0f, 1.0f, 1.0f},
+	128.f
+},
 {MATERIAL_BRASS,
 		{0.329412f, 0.223529f, 0.027451f,1.0f },
 		{0.780392f, 0.568627f, 0.113725f, 1.0f },
