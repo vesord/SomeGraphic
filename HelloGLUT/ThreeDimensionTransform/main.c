@@ -1,7 +1,3 @@
-#define GL_SILENCE_DEPRECATION
-#include <GLUT/glut.h>
-#include <math.h>
-
 /**
 	\author Vesord
  	\date march 2021
@@ -18,6 +14,10 @@
  	mouse Left - increase x and y scale
  	mouse Right - decrease x and y scale
  */
+
+#define GL_SILENCE_DEPRECATION
+#include <GLUT/glut.h>
+#include <math.h>
 
 GLfloat R=640.0/480; //Форматное соотношение
 GLfloat w=640;       //Ширина мирового окна

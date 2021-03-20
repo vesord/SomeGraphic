@@ -1,9 +1,23 @@
+/**
+	\author Vesord
+	\date march 2021
+	\brief simple 3D visualisation of polygons made by glBegin() glEnd()
+
+	key f - show cull face
+	key b - show cull back
+	key 1 - show/hide figure 1
+	key 2 - show/hide figure 2
+ */
+
 #define GL_SILENCE_DEPRECATION
 #include <GLUT/glut.h>
 
 GLfloat R=640.0/480; //Форматное соотношение
 GLfloat w=640;       //Ширина мирового окна
 GLfloat h=480;       //Высота мирового окна
+
+GLint showFig1 = 1;
+GLint showFig2 = 0;
 
 void init(void) {
 	glClearColor(0.3f, 0.3f, 0.3f, 0.0f);
@@ -29,12 +43,14 @@ void keyFunction(unsigned char key, int x, int y) {
 	switch (key) {
 		case 'f': glCullFace(GL_FRONT); break;
 		case 'b': glCullFace(GL_BACK); break;
+		case '1': showFig1 = !showFig1; break;
+		case '2': showFig2 = !showFig2; break;
 		default: break;
 	}
 	glutPostRedisplay();
 }
 
-void fig0() {
+void fig1() {
 	glPushMatrix();
 // грань f0
 	glColor3f(0.8f, 0.2f, 0.1f);
@@ -71,7 +87,7 @@ void fig0() {
 	glPopMatrix();
 }
 
-void fig1() {
+void fig2() {
 	// back edge
 	glColor3f(0.8f, 0.8f, 0.8f);
 	glBegin(GL_POLYGON);
@@ -126,7 +142,6 @@ void fig1() {
 	glVertex3f(2.f, 0.f, 1.f);
 	glVertex3f(0.f, 0.f, 1.f);
 	glEnd();
-
 }
 
 void display() {
@@ -134,8 +149,10 @@ void display() {
 	glColor3f(1.f, 0.f, 0.f);
 	glLoadIdentity();
 	gluLookAt(0.5, 3., 3., 0., 0., 0., 0., 1., 0.);
-//	fig0();		// switch
-	fig1();		// switch
+	if (showFig1)
+		fig1();
+	if (showFig2)
+		fig2();
 	glFlush();
 	glutSwapBuffers();
 }

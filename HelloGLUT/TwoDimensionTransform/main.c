@@ -1,3 +1,12 @@
+/**
+	\author Vesord
+	\date march 2021
+	\brief simple 2D visualisation of rectangles, some case of using matrices
+
+	no keys are allowed, switch between scene rotation and point moving on spiral
+	is made by hardcode in main() lol
+ */
+
 #define GL_SILENCE_DEPRECATION
 #include <GLUT/glut.h>
 #include <unistd.h>
