@@ -18,7 +18,7 @@ set(UTILS_SRC Utils/utils.c
               Utils/materials.c
               Utils/materials.h)
 
-set(OPENGL_LIBS libglfw3.a libGLEW.a)
+set(OPENGL_LIBS libglfw3.a libGLEW.a libSOIL.a)
 
 add_executable(HelloWindow HelloWindow/main.cpp)
 target_link_libraries(HelloWindow ${OPENGL_LIBS})

@@ -2,8 +2,10 @@
 #include <GLUT/glut.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <unistd.h>
+#include <fcntl.h>
+#include <errno.h>
 #include "materials.h"
-#include "FreeImage.h"
 
 static const GLint windowWidth =  640;
 static const GLint windowHeight = 640;
@@ -52,6 +54,84 @@ void initLight() {
 	glEnable(GL_LIGHT0);
 }
 
+typedef struct	s_bmp_file_header
+{
+	char	type_1;
+	char	type_2;
+	int		size;
+	int		reserved;
+	int		offset_to_color_bits;
+}				t_bmp_file_header;
+
+typedef struct	s_bmp_info
+{
+	int		size;
+	int		width;
+	int		height;
+	short	planes;
+	short	btp;
+	int		compression;
+	int		img_size;
+	int		ppm_x;
+	int		ppm_y;
+	int		color_table;
+	int		color_table_size;
+}				t_bmp_info;
+
+unsigned char *myBMPLoader(const char *filename, int *width, int *height) {
+	int fd;
+	t_bmp_file_header	bfh;
+	t_bmp_info			bmi;
+	unsigned char *		data = NULL;
+	int ret;
+
+	fd = open(filename, O_RDWR);
+	if (fd < 0)
+		exit(1);
+
+	read(fd, &(bfh.type_1), 1);
+	read(fd, &(bfh.type_2), 1);
+	read(fd, &(bfh.size), 4);
+	read(fd, &(bfh.reserved), 4);
+	read(fd, &(bfh.offset_to_color_bits), 4);
+	read(fd, &(bmi.size), 4);
+	read(fd, &(bmi.width), 4);
+	read(fd, &(bmi.height), 4);
+	read(fd, &(bmi.planes), 2);
+	read(fd, &(bmi.btp), 2);
+	read(fd, &(bmi.compression), 4);
+	read(fd, &(bmi.img_size), 4);
+	read(fd, &(bmi.ppm_x), 4);
+	read(fd, &(bmi.ppm_y), 4);
+	read(fd, &(bmi.color_table), 4);
+	read(fd, &(bmi.color_table_size), 4);
+
+	data = malloc(bmi.img_size);
+	if (!data)
+		exit(1);
+
+	read(fd, data, bmi.img_size);
+
+	close(fd);
+	*width = bmi.width;
+	*height = bmi.height;
+	return data;
+}
+
+void fixImage(unsigned char * image, int width, int height) {
+	int size = width * height;
+	char tmp;
+	for (int i = 0; i < size; i += 4) {
+		tmp = image[i];
+		image[i] = image[i + 3];
+		image[i + 3] = tmp;
+
+		tmp = image[i + 1];
+		image[i + 1] = image[i + 2];
+		image[i + 2] = tmp;
+	}
+}
+
 void initTexture() {
 	glEnable(GL_TEXTURE_2D);
 
@@ -60,12 +140,17 @@ void initTexture() {
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB,
-				 width, height, 0, GL_RGB,
-				 GL_UNSIGNED_BYTE, data);
+	int width, height;
+	unsigned char* image = myBMPLoader("Star.bmp", &width, &height);
+	if (!image)
+		exit(1);
+//	fixImage(image, width, height);
+
+	gluBuild2DMipmaps(GL_TEXTURE_2D, 4, width, height, GL_RGBA, GL_UNSIGNED_BYTE, image);
+	free(image);
 }
 
 void reshape(GLsizei W, GLsizei H) {
@@ -101,10 +186,11 @@ void key(unsigned char key, int x, int y) {
 }
 
 void figure() {
-	// back edge
+	glColor4f(1.f, 1.f, 1.f, 0.f);
 	glEnable(GL_TEXTURE_2D);
-	glBegin(GL_POLYGON);
-	glColor4f(0.f, 1.f, 0.f, 0.f);
+
+	// back edge
+	glBegin(GL_QUADS);
 	glNormal3f(0.f, 0.f, -1.f);
 	glBindTexture(GL_TEXTURE_2D, texture);
 	glTexCoord2f(0.0f, 0.0f); glVertex3f(0.f, 0.f, 0.f);
@@ -113,8 +199,7 @@ void figure() {
 	glTexCoord2f(0.0f, 1.0f); glVertex3f(2.f, 0.f, 0.f);
 	glEnd();
 	// right edge
-	glColor3f(0.1f, 0.7f, 1.f);
-	glBegin(GL_POLYGON);
+	glBegin(GL_QUADS);
 	glNormal3f(1.f, 0.f, 0.f);
 	glTexCoord2f(0.0f, 0.0f); glVertex3f(2.f, 0.f, 0.f);
 	glTexCoord2f(1.0f, 0.0f); glVertex3f(2.f, 1.f, 0.f);
@@ -122,8 +207,7 @@ void figure() {
 	glTexCoord2f(0.0f, 1.0f); glVertex3f(2.f, 0.f, 1.f);
 	glEnd();
 	// top edge
-	glColor3f(0.7f, 0.1f, 0.4f);
-	glBegin(GL_POLYGON);
+	glBegin(GL_QUADS);
 	glNormal3f(0.f, 1.f, 0.f);
 	glTexCoord2f(0.0f, 0.0f); glVertex3f(2.f, 1.f, 0.f);
 	glTexCoord2f(1.0f, 0.0f); glVertex3f(1.f, 1.f, 0.f);
@@ -131,8 +215,7 @@ void figure() {
 	glTexCoord2f(0.0f, 1.0f); glVertex3f(2.f, 1.f, 1.f);
 	glEnd();
 	// left edge
-	glColor3f(0.1f, 0.9f, 0.7f);
-	glBegin(GL_POLYGON);
+	glBegin(GL_QUADS);
 	glNormal3f(-1.f, 1.f, 0.f);
 	glTexCoord2f(0.0f, 0.0f); glVertex3f(1.f, 1.f, 0.f);
 	glTexCoord2f(1.0f, 0.0f); glVertex3f(0.f, 0.f, 0.f);
@@ -140,8 +223,7 @@ void figure() {
 	glTexCoord2f(0.0f, 1.0f); glVertex3f(1.f, 1.f, 1.f);
 	glEnd();
 	// front edge
-	glColor3f(0.8f, 0.4f, 0.9f);
-	glBegin(GL_POLYGON);
+	glBegin(GL_QUADS);
 	glNormal3f(0.f, 0.f, 1.f);
 	glTexCoord2f(0.0f, 0.0f); glVertex3f(1.f, 1.f, 1.f);
 	glTexCoord2f(1.0f, 0.0f); glVertex3f(0.f, 0.f, 1.f);
@@ -149,8 +231,7 @@ void figure() {
 	glTexCoord2f(0.0f, 1.0f); glVertex3f(2.f, 1.f, 1.f);
 	glEnd();
 	// bottom edge
-	glColor3f(0.8f, 0.4f, 0.9f);
-	glBegin(GL_POLYGON);
+	glBegin(GL_QUADS);
 	glNormal3f(0.f, -1.f, 0.f);
 	glTexCoord2f(0.0f, 0.0f); glVertex3f(0.f, 0.f, 0.f);
 	glTexCoord2f(1.0f, 0.0f); glVertex3f(2.f, 0.f, 0.f);
@@ -177,7 +258,7 @@ void drawFigure() {
 void display() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glLoadIdentity();
-	gluLookAt(0.0, 4., 4., 0., 0., 0., 0., 1., 0.);
+	gluLookAt(0.0, 3., 3., 0., 0., 0., 0., 1., 0.);
 
 	locateLight();
 	drawFigure();
