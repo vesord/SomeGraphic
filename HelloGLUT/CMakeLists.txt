@@ -25,8 +25,8 @@ target_link_options(SimpleFractal PUBLIC -framework GLUT)
 add_executable(Colors ${UTILS_SRC} Colors/main.c)
 target_link_options(Colors PUBLIC -framework GLUT)
 
-add_executable(Light ${UTILS_SRC} Light/main.c)
-target_link_options(Light PUBLIC -framework GLUT)
+add_executable(LightAndMaterials ${UTILS_SRC} LightAndMaterials/main.c)
+target_link_options(LightAndMaterials PUBLIC -framework GLUT)
 
 add_executable(DeleteInvisible ${UTILS_SRC} DeleteInvisible/main.c)
 target_link_options(DeleteInvisible PUBLIC -framework GLUT)

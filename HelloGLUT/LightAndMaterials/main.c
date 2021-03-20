@@ -1,3 +1,16 @@
+/**
+	\author Vesord
+ 	\date march 2021
+	\brief simple 3D visualisation of object with materials and light
+
+	key o - rotate object
+ 	key 1 - rotate light source
+ 	key f - show cull face
+ 	key b - show cull back
+ 	key e - ???
+ 	key E - ???
+*/
+
 #define GL_SILENCE_DEPRECATION
 #include <GLUT/glut.h>
 #include "materials.h"
@@ -62,10 +75,13 @@ void rotateLight() {
 	rotateWhat = ROTATE_LIGHT;
 }
 
-void changeMaterial() {
-	++materialType;
-	if (materialType == MATERIAL_END)
-		materialType = MATERIAL_NONE;
+void changeMaterial(GLint change) {
+	if (materialType == MATERIAL_NONE_BEGIN && change < 0)
+		materialType = MATERIAL_EMPTY_END;
+	else if (materialType == MATERIAL_EMPTY_END && change > 0)
+		materialType = MATERIAL_NONE_BEGIN;
+	else
+		materialType += change;
 	applyMaterial(GL_FRONT, materialType);
 }
 
@@ -75,7 +91,8 @@ void key(unsigned char key, int x, int y) {
 		case 'b': glCullFace(GL_BACK); break;
 		case 'o': rotateObject(); break;
 		case '1': rotateLight(); break;
-		case 'm': changeMaterial(); break;
+		case 'e': changeMaterial(1); break;
+		case 'E': changeMaterial(-1); break;
 		default: break;
 	}
 	glutPostRedisplay();
