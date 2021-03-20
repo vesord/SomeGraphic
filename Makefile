@@ -1,5 +1,5 @@
 .PHONY: all
-all: libs
+all: libs clean
 
 
 libs: glfw glew
@@ -23,3 +23,6 @@ clean:
 .PHONY: fclean
 fclean: clean
 	rm -rf *.a
+
+.PHONY: re
+re: fclean all
