@@ -1,10 +1,7 @@
 #define GL_SILENCE_DEPRECATION
 #include <GLUT/glut.h>
-#include <stdlib.h>
-#include <math.h>
 #include <unistd.h>
 
-#define PI 3.1459
 GLfloat R=640.0/480; //Форматное соотношение
 GLfloat w=640;       //Ширина мирового окна
 GLfloat h=480;       //Высота мирового окна
@@ -29,6 +26,7 @@ void reshape(GLsizei W, GLsizei H) {
 	if(R>W/H) glViewport(0,0,W,W/R);
 	else glViewport(0,0,H*R,H);
 }
+
 void showAxis(void) {
 	glColor3f(0.0f, 0.0f, 1.0f);
 	glBegin(GL_LINES);
@@ -50,7 +48,7 @@ void spiral(void) {
 	glClear(GL_COLOR_BUFFER_BIT);
 	showAxis();
 
-	glPushMatrix(); // todo remove push pop? use glLoadIdentity(); instead?
+	glPushMatrix();
 	glRotatef(dAngle, 0.0, 0.0, 1.0);
 	glTranslatef(dStep, 0.0f, 0.0f);
 	myPoint();
@@ -58,6 +56,7 @@ void spiral(void) {
 
 	glFlush();
 	glutSwapBuffers();
+
 	dAngle -= 4.f; if (dAngle <= 0.f) dAngle = 360.0f;
 	dStep -= 0.05f; if (dStep <= 0) dStep = 60.0f;
 	usleep(20000);
@@ -109,14 +108,17 @@ void bigModify(GLfloat angle, GLfloat step, GLfloat scale) {
 void squaresAndTriangles() {
 	static GLfloat stepScaler = 3.f;
 	static GLfloat scaleScaler = 0.05f;
+
 	glClear(GL_COLOR_BUFFER_BIT);
 	glLoadIdentity();
 	fig0();
 	bigModify(dAngle, dStep, dScale);
 	for (int i = 0; i < 4; ++i)
 		fig1(dStep);
+
 	glFlush();
 	glutSwapBuffers();
+
 	dAngle += 1.f; if (dAngle >= 360.f) dAngle = 0.f;
 	dStep += stepScaler; if (dStep >= 140.f || dStep <= 60) stepScaler *= -1.f;
 	dScale += scaleScaler; if (dScale <= 0.5f || dScale >= 2.0f) scaleScaler *= -1.f;
@@ -124,8 +126,8 @@ void squaresAndTriangles() {
 
 int main(int argc, char **argv) {
 	void (*task) ();
-//	task = spiral;
-	task = squaresAndTriangles;
+//	task = spiral;				// switch
+	task = squaresAndTriangles;	// switch
 
 	glutInit(&argc, argv);
 //	glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
