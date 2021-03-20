@@ -5,8 +5,6 @@
 	simple 3D visualisation of object with textures
 	also manual reading bitmap of BMP image
 
-	key o - rotate object
- 	key 1 - rotate light source
  	key f - show cull face
  	key b - show cull back
  	key e - ???
